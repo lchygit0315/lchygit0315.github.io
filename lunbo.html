@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0px;
+            padding:0px;
+            list-style: none;
+            text-decoration: none;
+        }
+        #container{
+            width:1200px;
+            height:600px;
+            margin:100px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        #list{
+            width: 7200px;
+            height:600px;
+            position: absolute;
+            z-index: 1;
+        }
+        #list img{
+            width: 1200px;
+            height:600px;
+            float: left;
+        }
+        #buttons{
+            width:100px;
+            height:10px;
+            position: absolute;
+            bottom: 20px;
+            left: 550px;
+            z-index: 2;
+        }
+        #buttons span{
+            width:10px;
+            height:10px;
+            border:1px solid #fff;
+            border-radius: 50%;
+            float: left;
+            cursor: pointer;
+            margin-left:4px;
+            margin-right: 4px;
+            background-color: #333;
+        }
+        #buttons .on{
+            background-color:orange ;
+        }
+        .arrow{
+            width: 40px;
+            height:40px;
+            cursor: pointer;
+            line-height: 40px;
+            font-size: 36px;
+            text-align: center;
+            z-index: 2;
+            position: absolute;
+            top:280px;
+            background-color: #333333;
+            display: none;
+        }
+        #next{
+            right: 20px;
+        }
+        #prev{
+            left:20px;
+        }
+        .arrow:hover{
+            background-color: rgba(0,0,0,.7);
+        }
+        #container:hover .arrow{
+            display: block;
+        }
+    </style>
+
+</head>
+<body>
+<div id="container">
+    <div id="list" style="left: -1200px">
+        <img src="img/tp-05.jpg" alt="">
+        <img src="img/tp-01.jpg" alt="">
+        <img src="img/tp-02.jpg" alt="">
+        <img src="img/tp-03.jpg" alt="">
+        <img src="img/tp-04.jpg" alt="">
+        <img src="img/tp-05.jpg" alt="">
+        <img src="img/tp-01.jpg" alt="">
+    </div>
+    <div id="buttons">
+        <span index="1" class="on"></span>
+        <span index="2"></span>
+        <span index="3"></span>
+        <span index="4"></span>
+        <span index="5"></span>
+    </div>
+    <a href="javascript:;" class="arrow" id="prev">&lt;</a>
+    <a href="javascript:;" class="arrow" id="next">&gt;</a>
+</div>
+<script>
+    window.onload=function () {
+        var container = document.getElementById("container");
+        var list = document.getElementById("list");
+        var buttons = document.getElementById("buttons").getElementsByTagName("span");
+        var prev = document.getElementById("prev");
+        var next = document.getElementById("next");
+        var index=1; //定义按钮下标
+        var timer;
+        function showbutton() {
+            for(var i=0;i<buttons.length;i++){
+                if(buttons[i].className=="on"){
+                    buttons[i].className=""; //当按钮点亮的时候 上一个就变为空
+                }
+            }
+            buttons[index-1].className="on";//按钮为0的时候就点亮
+        }
+        function animate(offset) {
+            var newleft= parseInt(list.style.left)+ offset;
+            list.style.left = newleft+ "px";
+            if(newleft>-1200){
+                list.style.left=-6000+"px"
+            }
+            if(newleft<-6000){
+                list.style.left=-1200+"px"
+            }
+        }
+        function play() {     //添加定时器 当点击事件发生的时候 每隔2秒自动切换
+            timer=setInterval(function () {
+             next.onclick();
+            },2000)
+        }
+        function stop() {       //清除定时器
+            clearInterval(timer)
+        }
+
+        next.onclick = function () {
+            if(index==5){
+                index=1
+            }else {
+                index+=1
+            }
+            showbutton();
+            animate(-1200)
+        };
+        prev.onclick = function () {
+            if(index==1){
+                index=5
+            }else {
+                index-=1;
+            }
+            showbutton();
+            animate(1200)
+        };
+        for(var i=0;i<buttons.length;i++){
+            buttons[i].onclick=function () {
+                if(this.className=="on"){
+                    return   //重复点击按钮不让它继续执行代码操作
+                }
+                var myIndex=parseInt(this.getAttribute("index"));//当点击按钮的时候 获取它本身的值
+                //把它的属性值转换为数字
+                var offset=-1200*(myIndex-index);//值等于偏移值乘以它的下标值
+                animate(offset);
+                index=myIndex;//切换完后的值又等于新的值
+                showbutton();
+            }
+        }
+        container.onmouseover=stop; //当鼠标移上去的时候 定时器停止
+        container.onmouseout=play;  //当鼠标离开了的时候 定时器运行
+    }
+
+
+</script>
+
+
+</body>
+</html>
